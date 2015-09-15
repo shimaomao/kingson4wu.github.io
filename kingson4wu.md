@@ -83,6 +83,9 @@ After you've added posts or made changes to your theme or other files, simply co
 2. $ git commit -m "Add new content"
 3. $ git push origin master
 
++ git config user.name "kingson4wu"
++ git config user.email "Kingson_Wu@163.com"
+
 
 <http://jekyllbootstrap.com/usage/jekyll-quick-start.html>
 
