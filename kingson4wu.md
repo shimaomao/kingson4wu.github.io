@@ -5,6 +5,7 @@ Read [Jekyll Quick Start](http://jekyllbootstrap.com/usage/jekyll-quick-start.ht
 Complete usage and documentation available at: [Jekyll Bootstrap](http://jekyllbootstrap.com)
 
 <http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html>
+
 <http://blog.csdn.net/on_1y/article/details/19259435>
 
 ### 三分钟建立Github博客
