@@ -1,3 +1,12 @@
+<https://github.com/blog/broadcasts>
+
+Read [Jekyll Quick Start](http://jekyllbootstrap.com/usage/jekyll-quick-start.html)
+
+Complete usage and documentation available at: [Jekyll Bootstrap](http://jekyllbootstrap.com)
+
+<http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html>
+<http://blog.csdn.net/on_1y/article/details/19259435>
+
 ### 三分钟建立Github博客
 
 Reference:<http://jingyan.baidu.com/article/6fb756eca39760241858fbca.html>
@@ -51,17 +60,17 @@ $ rake post title="Hello World"
 ---
 ### Create a Page
 
-1. Create pages easily via rake task:
+1. Create pages easily via rake task:<br />
 $ rake page name="about.md"
 >mkdir -p .<br />
 Creating new page: ./about.md
 
-2. Create a nested page:
+2. Create a nested page:<br />
 $ rake page name="pages/about.md"
 >mkdir -p ./pages<br />
 Creating new page: ./pages/about.md
 
-3. Create a page with a "pretty" path:
+3. Create a page with a "pretty" path:<br />
 $ rake page name="pages/about"
 >mkdir -p ./pages/about<br />
 Creating new page: ./pages/about/index.html
@@ -72,3 +81,12 @@ After you've added posts or made changes to your theme or other files, simply co
 1. $ git add .
 2. $ git commit -m "Add new content"
 3. $ git push origin master
+
+
+<http://jekyllbootstrap.com/usage/jekyll-quick-start.html>
+
+### Using Themes
+
+1. $ rake theme:install git="https://github.com/jekyllbootstrap/theme-the-program.git"
+2. $ rake theme:install name="THEME-NAME"
+3. $ rake theme:switch name="the-program"
