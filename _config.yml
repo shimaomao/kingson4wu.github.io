@@ -99,4 +99,10 @@ live2d:
     width: 150
     height: 300
   mobile:
-    show: false #是否在手机端显示
+    show: false 
+
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
