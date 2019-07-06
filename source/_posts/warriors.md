@@ -4,6 +4,6 @@ date: 2019-07-06 10:33:54
 tags:
 ---
 
-![](/uploads/2019/Warriors.png)
+![](warriors/Warriors.png)
 
 
