@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-26T15:09:58.000Z</updated>
+  <updated>2020-03-26T16:19:06.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,13 +17,40 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>移动端下一种折中分页方法</title>
+    <title>移动端下一种折中的分页方法</title>
     <link href="http://yoursite.com/2020/03/26/20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95/"/>
     <id>http://yoursite.com/2020/03/26/20200326-移动端下一种折中分页方法/</id>
     <published>2020-03-25T16:36:38.000Z</published>
-    <updated>2020-03-26T15:09:58.000Z</updated>
+    <updated>2020-03-26T16:19:06.000Z</updated>
     
-    <content type="html"><![CDATA[<ul><li><p>移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。</p></li><li><p>一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。</p></li><li><p>而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。</p></li><li><p>以下面的场景为例：</p></li></ul><div id="sequence-0"></div><ul><li>业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。</li><li>解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看</li></ul><div id="sequence-1"></div><ul><li>方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30</li></ul><script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="https://cdn.bootcss.com/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script><textarea id="sequence-0-code" style="display: none">客户端->业务服务: 获取歌曲列表（size＝10）业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A)#Note right of 曲库服务: 对象B的描述#Note left of 业务A: 对象A的描述(提示)曲库服务-->业务服务: 返回歌曲列表（size＝10）业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B)业务服务->>业务服务:根据B过滤A业务服务-->客户端:获取歌曲列表（size<=10或size＝0）< textarea><textarea id="sequence-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("sequence-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-0-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-0", options);</script><textarea id="sequence-1-code" style="display: none">客户端->业务服务: 获取歌曲列表（size＝10）业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A)#Note right of 曲库服务: 对象B的描述#Note left of 业务A: 对象A的描述(提示)曲库服务-->业务服务: 返回歌曲列表（size＝10）业务服务->>业务服务:有数据设置hasNext=1\n无数据设置hasNext=0业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B)业务服务->>业务服务:根据B过滤A业务服务-->客户端:获取歌曲列表（size<=10或size＝0,hasnext值） 客户端->>客户端:hasNext=1用户可继续向下滑动</=10或size＝0,hasnext值）></textarea><textarea id="sequence-1-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("sequence-1-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-1-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-1", options);</script></=10或size＝0）<></textarea>]]></content>
+    <content type="html"><![CDATA[<ul><li><p>移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。</p></li><li><p>一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。</p></li><li><p>而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。</p></li><li><p>以下面的场景为例：</p></li></ul><p><img src="/2020/03/26/20200326-移动端下一种折中分页方法/page1.png" alt></p><ul><li>业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。</li><li>解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看</li></ul><p><img src="/2020/03/26/20200326-移动端下一种折中分页方法/page2.png" alt></p><ul><li>方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;ul&gt;
+&lt;li&gt;&lt;p&gt;移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。&lt;/p&gt;
+&lt;/li&gt;
+      
+    
+    </summary>
+    
+    
+      <category term="分页" scheme="http://yoursite.com/tags/%E5%88%86%E9%A1%B5/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>移动端下一种折中的分页方法</title>
+    <link href="http://yoursite.com/2020/03/26/20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95/20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95/"/>
+    <id>http://yoursite.com/2020/03/26/20200326-移动端下一种折中分页方法/20200326-移动端下一种折中分页方法/</id>
+    <published>2020-03-25T16:36:38.000Z</published>
+    <updated>2020-03-26T16:09:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<ul><li><p>移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。</p></li><li><p>一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。</p></li><li><p>而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。</p></li><li><p>以下面的场景为例：</p></li></ul><div id="sequence-0"></div><ul><li>业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。</li><li>解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看</li></ul><div id="sequence-1"></div><ul><li>方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30</li></ul><script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script><textarea id="sequence-0-code" style="display: none">客户端->业务服务: 获取歌曲列表（size＝10）业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A)#Note right of 曲库服务: 对象B的描述#Note left of 业务A: 对象A的描述(提示)曲库服务-->业务服务: 返回歌曲列表（size＝10）业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B)业务服务->>业务服务:根据B过滤A业务服务-->客户端:获取歌曲列表（size<=10或size＝0）< textarea><textarea id="sequence-0-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12,"theme":"simple"}</textarea><script>  var code = document.getElementById("sequence-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-0-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-0", options);</script><textarea id="sequence-1-code" style="display: none">客户端->业务服务: 获取歌曲列表（size＝10）业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A)#Note right of 曲库服务: 对象B的描述#Note left of 业务A: 对象A的描述(提示)曲库服务-->业务服务: 返回歌曲列表（size＝10）业务服务->>业务服务:有数据设置hasNext=1\n无数据设置hasNext=0业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B)业务服务->>业务服务:根据B过滤A业务服务-->客户端:获取歌曲列表（size<=10或size＝0,hasnext值） 客户端->>客户端:hasNext=1用户可继续向下滑动</=10或size＝0,hasnext值）></textarea><textarea id="sequence-1-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12,"theme":"simple"}</textarea><script>  var code = document.getElementById("sequence-1-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-1-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-1", options);</script></=10或size＝0）<></textarea>]]></content>
     
     <summary type="html">
     

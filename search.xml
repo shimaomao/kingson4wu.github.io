@@ -1,65 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search> 
-  
-  
-    
-    <entry>
-      <title>移动端下一种折中分页方法</title>
-      <link href="/2020/03/26/20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95/"/>
-      <url>/2020/03/26/20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95/</url>
-      
-        <content type="html"><![CDATA[<ul><li><p>移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。</p></li><li><p>一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。</p></li><li><p>而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。</p></li><li><p>以下面的场景为例：</p></li></ul><div id="sequence-0"></div><ul><li>业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。</li><li>解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看</li></ul><div id="sequence-1"></div><ul><li>方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30</li></ul><script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="https://cdn.bootcss.com/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script><textarea id="sequence-0-code" style="display: none">客户端->业务服务: 获取歌曲列表（size＝10）业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A)#Note right of 曲库服务: 对象B的描述#Note left of 业务A: 对象A的描述(提示)曲库服务-->业务服务: 返回歌曲列表（size＝10）业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B)业务服务->>业务服务:根据B过滤A业务服务-->客户端:获取歌曲列表（size<=10或size＝0）< textarea><textarea id="sequence-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("sequence-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-0-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-0", options);</script><textarea id="sequence-1-code" style="display: none">客户端->业务服务: 获取歌曲列表（size＝10）业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A)#Note right of 曲库服务: 对象B的描述#Note left of 业务A: 对象A的描述(提示)曲库服务-->业务服务: 返回歌曲列表（size＝10）业务服务->>业务服务:有数据设置hasNext=1\n无数据设置hasNext=0业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B)业务服务->>业务服务:根据B过滤A业务服务-->客户端:获取歌曲列表（size<=10或size＝0,hasnext值） 客户端->>客户端:hasNext=1用户可继续向下滑动</=10或size＝0,hasnext值）></textarea><textarea id="sequence-1-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("sequence-1-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-1-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-1", options);</script></=10或size＝0）<></textarea>]]></content>
-      
-      
-      
-        <tags>
-            
-            <tag> 分页 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>电影摘要</title>
-      <link href="/2020/01/01/%E7%94%B5%E5%BD%B1%E6%91%98%E8%A6%81/"/>
-      <url>/2020/01/01/%E7%94%B5%E5%BD%B1%E6%91%98%E8%A6%81/</url>
-      
-        <content type="html"><![CDATA[<h2 id="《战争之王》"><a href="#《战争之王》" class="headerlink" title="《战争之王》"></a>《战争之王》</h2><ul><li><a href="https://movie.douban.com/review/8808554/" target="_blank" rel="noopener">https://movie.douban.com/review/8808554/</a></li><li>Let me tell you what’s gonna happen.This way you can prepare yourself.Soon there’s gonna be a knock on that door and you will be called outside. In the hall there will be a man who outranks you.First,he’ll compliment you on the fine job you’ve done, that you’re making the world a safer place,that you’re to receive a commendation and a promotion.And then he’s going to tell you that I am to be released. You’re going to protest.You’ll probably threaten to resign.But in the end I will be released.The reason I’ll be released is the same reason you think I’ll be convicted.I do rub shoulders with some of the most vile,sadistic men calling themselves leaders today.But some of those men are the enemies of your enemies.And while the biggest arms dealer in the world is your boss, the President of the United States, who ships more merchandise in a day than I do in a year,sometimes it’s embarrassing to have his fingerprints on the guns. Sometimes he needs a freelancer like me to supply forces he can’t be seen supplying. So , you call me evil. But unfortunately for you,I’m a necessary evil.<br>　　- 让我告诉你将会发生什么事情，好让你有个心理准备。很快会有人来敲门叫你出去，大厅里有个比你官衔高的人。首先，他会称赞你所做的一切，世界因为你变得更安全，你会获得表扬或晋升。然后他会告诉你，我会被释放。你会反对，也许还威胁要辞职，但最后我还是会被释放。我被释放的理由跟你认为我会被定罪的理由一样，我和世界上称自己为领导人的人打交道。这些人其中有些是你敌人的敌人，世界上最大的军火商是你的老板，美国的总统，他一天卖的比我一年还多，有时候在枪支上找到他的指纹是一件很尴尬的事，有时他需要像我这样的自由工作者供应一些他不方便出面供应的货物。所以，你说我是恶魔，但不幸的是，对你我是一个必须存在的恶魔。</li></ul>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>《天下足球》曲目</title>
-      <link href="/2019/12/28/%E3%80%8A%E5%A4%A9%E4%B8%8B%E8%B6%B3%E7%90%83%E3%80%8B%E6%9B%B2%E7%9B%AE/"/>
-      <url>/2019/12/28/%E3%80%8A%E5%A4%A9%E4%B8%8B%E8%B6%B3%E7%90%83%E3%80%8B%E6%9B%B2%E7%9B%AE/</url>
-      
-        <content type="html"><![CDATA[<ol><li>The Phoenix - Fall Out boy</li><li>Love Runs Out - OneRepublic</li><li>Empire of Angels</li><li>Breath And Lift</li><li>If I Could Fly</li><li>Electric romeo</li><li>Rise - John Dreamer</li><li>Victory - Two Steps From Hell</li><li>El Dorado - Two Steps From Hell</li><li>Journey - Capo Productions</li><li>Star Sky - Two Steps From Hell</li><li>No Boundaries - Adam Lambert</li><li>Attraction - Masazumi Ozawa</li><li>Because of You - Kelly Clarkson</li><li>Now We Are Free - Hans Zimmer</li></ol><p><img src="/2019/12/28/《天下足球》曲目/Cristiano_Ronaldo.jpeg" alt></p>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>Warriors</title>
-      <link href="/2019/07/06/warriors/"/>
-      <url>/2019/07/06/warriors/</url>
-      
-        <content type="html"><![CDATA[<ul><li>Goooooooooooo!<br><img src="/2019/07/06/warriors/Warriors.png" alt></li></ul>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-  
-  
+<search>
+  <entry>
+    <title><![CDATA[移动端下一种折中的分页方法]]></title>
+    <url>%2F2020%2F03%2F26%2F20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95%2F</url>
+    <content type="text"><![CDATA[移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。 一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。 而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。 以下面的场景为例： 业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。 解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看 方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30]]></content>
+      <tags>
+        <tag>分页</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[移动端下一种折中的分页方法]]></title>
+    <url>%2F2020%2F03%2F26%2F20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95%2F20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95%2F</url>
+    <content type="text"><![CDATA[移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。 一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。 而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。 以下面的场景为例： 业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。 解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看 方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30 客户端->业务服务: 获取歌曲列表（size＝10） 业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A) #Note right of 曲库服务: 对象B的描述 #Note left of 业务A: 对象A的描述(提示) 曲库服务-->业务服务: 返回歌曲列表（size＝10） 业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B) 业务服务->>业务服务:根据B过滤A 业务服务-->客户端:获取歌曲列表（size业务服务: 获取歌曲列表（size＝10） 业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A) #Note right of 曲库服务: 对象B的描述 #Note left of 业务A: 对象A的描述(提示) 曲库服务-->业务服务: 返回歌曲列表（size＝10） 业务服务->>业务服务:有数据设置hasNext=1\n无数据设置hasNext=0 业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B) 业务服务->>业务服务:根据B过滤A 业务服务-->客户端:获取歌曲列表（size>客户端:hasNext=1用户可继续向下滑动{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12,"theme":"simple"} var code = document.getElementById("sequence-1-code").value; var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-1-options").value)); var diagram = Diagram.parse(code); diagram.drawSVG("sequence-1", options);]]></content>
+      <tags>
+        <tag>分页</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[电影摘要]]></title>
+    <url>%2F2020%2F01%2F01%2F%E7%94%B5%E5%BD%B1%E6%91%98%E8%A6%81%2F</url>
+    <content type="text"><![CDATA[《战争之王》 https://movie.douban.com/review/8808554/ Let me tell you what’s gonna happen.This way you can prepare yourself.Soon there’s gonna be a knock on that door and you will be called outside. In the hall there will be a man who outranks you.First,he’ll compliment you on the fine job you’ve done, that you’re making the world a safer place,that you’re to receive a commendation and a promotion.And then he’s going to tell you that I am to be released. You’re going to protest.You’ll probably threaten to resign.But in the end I will be released.The reason I’ll be released is the same reason you think I’ll be convicted.I do rub shoulders with some of the most vile,sadistic men calling themselves leaders today.But some of those men are the enemies of your enemies.And while the biggest arms dealer in the world is your boss, the President of the United States, who ships more merchandise in a day than I do in a year,sometimes it’s embarrassing to have his fingerprints on the guns. Sometimes he needs a freelancer like me to supply forces he can’t be seen supplying. So , you call me evil. But unfortunately for you,I’m a necessary evil. - 让我告诉你将会发生什么事情，好让你有个心理准备。很快会有人来敲门叫你出去，大厅里有个比你官衔高的人。首先，他会称赞你所做的一切，世界因为你变得更安全，你会获得表扬或晋升。然后他会告诉你，我会被释放。你会反对，也许还威胁要辞职，但最后我还是会被释放。我被释放的理由跟你认为我会被定罪的理由一样，我和世界上称自己为领导人的人打交道。这些人其中有些是你敌人的敌人，世界上最大的军火商是你的老板，美国的总统，他一天卖的比我一年还多，有时候在枪支上找到他的指纹是一件很尴尬的事，有时他需要像我这样的自由工作者供应一些他不方便出面供应的货物。所以，你说我是恶魔，但不幸的是，对你我是一个必须存在的恶魔。]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[《天下足球》曲目]]></title>
+    <url>%2F2019%2F12%2F28%2F%E3%80%8A%E5%A4%A9%E4%B8%8B%E8%B6%B3%E7%90%83%E3%80%8B%E6%9B%B2%E7%9B%AE%2F</url>
+    <content type="text"><![CDATA[The Phoenix - Fall Out boy Love Runs Out - OneRepublic Empire of Angels Breath And Lift If I Could Fly Electric romeo Rise - John Dreamer Victory - Two Steps From Hell El Dorado - Two Steps From Hell Journey - Capo Productions Star Sky - Two Steps From Hell No Boundaries - Adam Lambert Attraction - Masazumi Ozawa Because of You - Kelly Clarkson Now We Are Free - Hans Zimmer]]></content>
+  </entry>
+  <entry>
+    <title><![CDATA[Warriors]]></title>
+    <url>%2F2019%2F07%2F06%2Fwarriors%2F</url>
+    <content type="text"><![CDATA[Goooooooooooo!]]></content>
+  </entry>
 </search>
