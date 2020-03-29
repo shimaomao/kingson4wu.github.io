@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-26T16:19:06.000Z</updated>
+  <updated>2020-03-29T06:18:14.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,11 +17,61 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>20200329-发版过程的兼容性考虑</title>
+    <link href="http://yoursite.com/2020/03/29/20200329-%E5%8F%91%E7%89%88%E8%BF%87%E7%A8%8B%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7%E8%80%83%E8%99%91/"/>
+    <id>http://yoursite.com/2020/03/29/20200329-发版过程的兼容性考虑/</id>
+    <published>2020-03-29T05:35:18.000Z</published>
+    <updated>2020-03-29T06:18:14.000Z</updated>
+    
+    <content type="html"><![CDATA[<ul><li>一般情况下，服务一般不是仅有一台服务器提供服务的，因此服务上线的过程中其实会经历一个灰度过程</li></ul><p><img src="/2020/03/29/20200329-发版过程的兼容性考虑/mermaid-diagram-20200329140016.png" alt></p><p>如上所示，服务器A是新代码，走的是新逻辑，服务器B和C未发版，走的旧逻辑。</p><ul><li>如果新上线的变更只涉及读逻辑的，那么这样的灰度上线是没问题的。</li><li>但如果上线的内容涉及写逻辑的变更，甚至还关联到异步处理的变更。那么这样的上线方式可能是不兼容的，会导致处理异常。</li><li>在服务全量发版之后，新的流量可能正常，但发版过程中导致一定的脏数据。</li></ul><p>(图不画了，自行想象)</p><h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><ul><li>开关！用配置中心开关控制，走新逻辑还是旧逻辑。默认旧逻辑。</li><li>代码需要保留两套，通过开关控制走哪个分支。</li><li>全量发版之后，此时线上全是新代码了，通过开关灰度(此时是业务灰度而不是机器灰度了)</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;ul&gt;
+&lt;li&gt;一般情况下，服务一般不是仅有一台服务器提供服务的，因此服务上线的过程中其实会经历一个灰度过程&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&quot;/2020/03/29/20200329-发版过程的兼容性考虑/mermaid-diagram-202003291400
+      
+    
+    </summary>
+    
+    
+      <category term="业务方案" scheme="http://yoursite.com/tags/%E4%B8%9A%E5%8A%A1%E6%96%B9%E6%A1%88/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>20200329-表结构变更是否需要处理历史月表？</title>
+    <link href="http://yoursite.com/2020/03/29/20200329-%E8%A1%A8%E7%BB%93%E6%9E%84%E5%8F%98%E6%9B%B4%E6%98%AF%E5%90%A6%E9%9C%80%E8%A6%81%E5%A4%84%E7%90%86%E5%8E%86%E5%8F%B2%E6%9C%88%E8%A1%A8%EF%BC%9F/"/>
+    <id>http://yoursite.com/2020/03/29/20200329-表结构变更是否需要处理历史月表？/</id>
+    <published>2020-03-29T04:42:38.000Z</published>
+    <updated>2020-03-29T05:27:49.000Z</updated>
+    
+    <content type="html"><![CDATA[<ul><li>目前针对历史流水表，历史订单表，采用的以月为纬度的方式建表，如以下表结构所示<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`t_order_202002`</span> (</span><br><span class="line"><span class="string">`order_id`</span> <span class="built_in">varchar</span>(<span class="number">128</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'订单id'</span>,</span><br><span class="line"><span class="string">`coin`</span> <span class="built_in">decimal</span>(<span class="number">32</span>,<span class="number">2</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0.00'</span> <span class="keyword">COMMENT</span> <span class="string">'支付币数'</span>,</span><br><span class="line"><span class="string">`user_id`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span> <span class="keyword">COMMENT</span> <span class="string">'用户id'</span>,</span><br><span class="line"><span class="string">`create_time`</span> datetime <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'创建时间'</span>,</span><br><span class="line"><span class="string">`update_time`</span> datetime <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'更新时间'</span>,</span><br><span class="line">PRIMARY <span class="keyword">KEY</span> (<span class="string">`order_id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8mb4 <span class="keyword">COMMENT</span>=<span class="string">'订单表'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`t_order_202003`</span> (</span><br><span class="line"><span class="string">`order_id`</span> <span class="built_in">varchar</span>(<span class="number">128</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'订单id'</span>,</span><br><span class="line"><span class="string">`coin`</span> <span class="built_in">decimal</span>(<span class="number">32</span>,<span class="number">2</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0.00'</span> <span class="keyword">COMMENT</span> <span class="string">'支付币数'</span>,</span><br><span class="line"><span class="string">`user_id`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span> <span class="keyword">COMMENT</span> <span class="string">'用户id'</span>,</span><br><span class="line"><span class="string">`create_time`</span> datetime <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'创建时间'</span>,</span><br><span class="line"><span class="string">`update_time`</span> datetime <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'更新时间'</span>,</span><br><span class="line">PRIMARY <span class="keyword">KEY</span> (<span class="string">`order_id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8mb4 <span class="keyword">COMMENT</span>=<span class="string">'订单表'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`t_order_202004`</span> (</span><br><span class="line"><span class="string">`order_id`</span> <span class="built_in">varchar</span>(<span class="number">128</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'订单id'</span>,</span><br><span class="line"><span class="string">`coin`</span> <span class="built_in">decimal</span>(<span class="number">32</span>,<span class="number">2</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0.00'</span> <span class="keyword">COMMENT</span> <span class="string">'支付币数'</span>,</span><br><span class="line"><span class="string">`user_id`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">unsigned</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span> <span class="keyword">COMMENT</span> <span class="string">'用户id'</span>,</span><br><span class="line"><span class="string">`create_time`</span> datetime <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'创建时间'</span>,</span><br><span class="line"><span class="string">`update_time`</span> datetime <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'更新时间'</span>,</span><br><span class="line">PRIMARY <span class="keyword">KEY</span> (<span class="string">`order_id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8mb4 <span class="keyword">COMMENT</span>=<span class="string">'订单表'</span></span><br></pre></td></tr></table></figure></li></ul><p>现要对表结构增加一个字段 room_id</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> t_order_202003</span><br><span class="line"><span class="keyword">ADD</span> <span class="keyword">COLUMN</span> <span class="string">`room_id`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span> <span class="keyword">COMMENT</span> <span class="string">'动作发生的所在房间ID'</span>;</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> t_order_202004</span><br><span class="line"><span class="keyword">ADD</span> <span class="keyword">COLUMN</span> <span class="string">`room_id`</span> <span class="built_in">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span> <span class="keyword">COMMENT</span> <span class="string">'动作发生的所在房间ID'</span>;</span><br></pre></td></tr></table></figure><p>那么久的历史表可以不处理吗？</p><ol><li>假如全部的查询语句都是<code>select *</code>,  那么久的历史表可以不处理，但是这样违反了按需查询原则</li><li>如果查询语句有指定字段如<code>select order_id, room_id</code>,那么查询到旧的表时会报错</li></ol><h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><ol><li>历史表和当前的表结构保存一致，在进行表结构变更时一并处理，避免后续的坑(没精力折腾的建议这样处理，可以增加一些监控手段)</li><li>历史表不处理，在程序代码上兼容。这样会增加代码复杂度，难以维护，如果有必要最好统一sdk中处理。</li><li>运维层面，统一处理，统一月表的结构，需要DBA工具支持</li></ol>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;ul&gt;
+&lt;li&gt;目前针对历史流水表，历史订单表，采用的以月为纬度的方式建表，如以下表结构所示&lt;figure class=&quot;highlight sql&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;
+      
+    
+    </summary>
+    
+    
+      <category term="业务方案 历史月表" scheme="http://yoursite.com/tags/%E4%B8%9A%E5%8A%A1%E6%96%B9%E6%A1%88-%E5%8E%86%E5%8F%B2%E6%9C%88%E8%A1%A8/"/>
+    
+  </entry>
+  
+  <entry>
     <title>移动端下一种折中的分页方法</title>
     <link href="http://yoursite.com/2020/03/26/20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95/"/>
     <id>http://yoursite.com/2020/03/26/20200326-移动端下一种折中分页方法/</id>
     <published>2020-03-25T16:36:38.000Z</published>
-    <updated>2020-03-26T16:19:06.000Z</updated>
+    <updated>2020-03-29T04:42:58.000Z</updated>
     
     <content type="html"><![CDATA[<ul><li><p>移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。</p></li><li><p>一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。</p></li><li><p>而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。</p></li><li><p>以下面的场景为例：</p></li></ul><p><img src="/2020/03/26/20200326-移动端下一种折中分页方法/page1.png" alt></p><ul><li>业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。</li><li>解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看</li></ul><p><img src="/2020/03/26/20200326-移动端下一种折中分页方法/page2.png" alt></p><ul><li>方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30</li></ul>]]></content>
     
@@ -39,34 +89,7 @@
     </summary>
     
     
-      <category term="分页" scheme="http://yoursite.com/tags/%E5%88%86%E9%A1%B5/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>移动端下一种折中的分页方法</title>
-    <link href="http://yoursite.com/2020/03/26/20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95/20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95/"/>
-    <id>http://yoursite.com/2020/03/26/20200326-移动端下一种折中分页方法/20200326-移动端下一种折中分页方法/</id>
-    <published>2020-03-25T16:36:38.000Z</published>
-    <updated>2020-03-26T16:09:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<ul><li><p>移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。</p></li><li><p>一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。</p></li><li><p>而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。</p></li><li><p>以下面的场景为例：</p></li></ul><div id="sequence-0"></div><ul><li>业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。</li><li>解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看</li></ul><div id="sequence-1"></div><ul><li>方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30</li></ul><script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script><textarea id="sequence-0-code" style="display: none">客户端->业务服务: 获取歌曲列表（size＝10）业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A)#Note right of 曲库服务: 对象B的描述#Note left of 业务A: 对象A的描述(提示)曲库服务-->业务服务: 返回歌曲列表（size＝10）业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B)业务服务->>业务服务:根据B过滤A业务服务-->客户端:获取歌曲列表（size<=10或size＝0）< textarea><textarea id="sequence-0-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12,"theme":"simple"}</textarea><script>  var code = document.getElementById("sequence-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-0-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-0", options);</script><textarea id="sequence-1-code" style="display: none">客户端->业务服务: 获取歌曲列表（size＝10）业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A)#Note right of 曲库服务: 对象B的描述#Note left of 业务A: 对象A的描述(提示)曲库服务-->业务服务: 返回歌曲列表（size＝10）业务服务->>业务服务:有数据设置hasNext=1\n无数据设置hasNext=0业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B)业务服务->>业务服务:根据B过滤A业务服务-->客户端:获取歌曲列表（size<=10或size＝0,hasnext值） 客户端->>客户端:hasNext=1用户可继续向下滑动</=10或size＝0,hasnext值）></textarea><textarea id="sequence-1-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12,"theme":"simple"}</textarea><script>  var code = document.getElementById("sequence-1-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-1-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-1", options);</script></=10或size＝0）<></textarea>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。&lt;/p&gt;
-&lt;/li&gt;
-      
-    
-    </summary>
-    
-    
-      <category term="分页" scheme="http://yoursite.com/tags/%E5%88%86%E9%A1%B5/"/>
+      <category term="分页 业务方案" scheme="http://yoursite.com/tags/%E5%88%86%E9%A1%B5-%E4%B8%9A%E5%8A%A1%E6%96%B9%E6%A1%88/"/>
     
   </entry>
   

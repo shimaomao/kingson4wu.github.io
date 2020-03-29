@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[移动端下一种折中的分页方法]]></title>
-    <url>%2F2020%2F03%2F26%2F20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95%2F</url>
-    <content type="text"><![CDATA[移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。 一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。 而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。 以下面的场景为例： 业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。 解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看 方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30]]></content>
+    <title><![CDATA[20200329-发版过程的兼容性考虑]]></title>
+    <url>%2F2020%2F03%2F29%2F20200329-%E5%8F%91%E7%89%88%E8%BF%87%E7%A8%8B%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7%E8%80%83%E8%99%91%2F</url>
+    <content type="text"><![CDATA[一般情况下，服务一般不是仅有一台服务器提供服务的，因此服务上线的过程中其实会经历一个灰度过程 如上所示，服务器A是新代码，走的是新逻辑，服务器B和C未发版，走的旧逻辑。 如果新上线的变更只涉及读逻辑的，那么这样的灰度上线是没问题的。 但如果上线的内容涉及写逻辑的变更，甚至还关联到异步处理的变更。那么这样的上线方式可能是不兼容的，会导致处理异常。 在服务全量发版之后，新的流量可能正常，但发版过程中导致一定的脏数据。 (图不画了，自行想象) 解决方案 开关！用配置中心开关控制，走新逻辑还是旧逻辑。默认旧逻辑。 代码需要保留两套，通过开关控制走哪个分支。 全量发版之后，此时线上全是新代码了，通过开关灰度(此时是业务灰度而不是机器灰度了)]]></content>
       <tags>
-        <tag>分页</tag>
+        <tag>业务方案</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[20200329-表结构变更是否需要处理历史月表？]]></title>
+    <url>%2F2020%2F03%2F29%2F20200329-%E8%A1%A8%E7%BB%93%E6%9E%84%E5%8F%98%E6%9B%B4%E6%98%AF%E5%90%A6%E9%9C%80%E8%A6%81%E5%A4%84%E7%90%86%E5%8E%86%E5%8F%B2%E6%9C%88%E8%A1%A8%EF%BC%9F%2F</url>
+    <content type="text"><![CDATA[目前针对历史流水表，历史订单表，采用的以月为纬度的方式建表，如以下表结构所示1234567891011121314151617181920212223242526CREATE TABLE `t_order_202002` (`order_id` varchar(128) NOT NULL COMMENT '订单id',`coin` decimal(32,2) NOT NULL DEFAULT '0.00' COMMENT '支付币数',`user_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',`create_time` datetime NOT NULL COMMENT '创建时间',`update_time` datetime NOT NULL COMMENT '更新时间',PRIMARY KEY (`order_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表'CREATE TABLE `t_order_202003` (`order_id` varchar(128) NOT NULL COMMENT '订单id',`coin` decimal(32,2) NOT NULL DEFAULT '0.00' COMMENT '支付币数',`user_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',`create_time` datetime NOT NULL COMMENT '创建时间',`update_time` datetime NOT NULL COMMENT '更新时间',PRIMARY KEY (`order_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表'CREATE TABLE `t_order_202004` (`order_id` varchar(128) NOT NULL COMMENT '订单id',`coin` decimal(32,2) NOT NULL DEFAULT '0.00' COMMENT '支付币数',`user_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',`create_time` datetime NOT NULL COMMENT '创建时间',`update_time` datetime NOT NULL COMMENT '更新时间',PRIMARY KEY (`order_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表' 现要对表结构增加一个字段 room_id 1234ALTER TABLE t_order_202003ADD COLUMN `room_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '动作发生的所在房间ID';ALTER TABLE t_order_202004ADD COLUMN `room_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '动作发生的所在房间ID'; 那么久的历史表可以不处理吗？ 假如全部的查询语句都是select *, 那么久的历史表可以不处理，但是这样违反了按需查询原则 如果查询语句有指定字段如select order_id, room_id,那么查询到旧的表时会报错 解决方法 历史表和当前的表结构保存一致，在进行表结构变更时一并处理，避免后续的坑(没精力折腾的建议这样处理，可以增加一些监控手段) 历史表不处理，在程序代码上兼容。这样会增加代码复杂度，难以维护，如果有必要最好统一sdk中处理。 运维层面，统一处理，统一月表的结构，需要DBA工具支持]]></content>
+      <tags>
+        <tag>业务方案 历史月表</tag>
       </tags>
   </entry>
   <entry>
     <title><![CDATA[移动端下一种折中的分页方法]]></title>
-    <url>%2F2020%2F03%2F26%2F20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95%2F20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95%2F</url>
-    <content type="text"><![CDATA[移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。 一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。 而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。 以下面的场景为例： 业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。 解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看 方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30 客户端->业务服务: 获取歌曲列表（size＝10） 业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A) #Note right of 曲库服务: 对象B的描述 #Note left of 业务A: 对象A的描述(提示) 曲库服务-->业务服务: 返回歌曲列表（size＝10） 业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B) 业务服务->>业务服务:根据B过滤A 业务服务-->客户端:获取歌曲列表（size业务服务: 获取歌曲列表（size＝10） 业务服务->曲库服务: 搜索分页获取歌曲列表（size＝10）(A) #Note right of 曲库服务: 对象B的描述 #Note left of 业务A: 对象A的描述(提示) 曲库服务-->业务服务: 返回歌曲列表（size＝10） 业务服务->>业务服务:有数据设置hasNext=1\n无数据设置hasNext=0 业务服务->歌曲鉴权服务: 根据歌曲id批量查询歌曲权限等属性(B) 业务服务->>业务服务:根据B过滤A 业务服务-->客户端:获取歌曲列表（size>客户端:hasNext=1用户可继续向下滑动{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12,"theme":"simple"} var code = document.getElementById("sequence-1-code").value; var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-1-options").value)); var diagram = Diagram.parse(code); diagram.drawSVG("sequence-1", options);]]></content>
+    <url>%2F2020%2F03%2F26%2F20200326-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8B%E4%B8%80%E7%A7%8D%E6%8A%98%E4%B8%AD%E5%88%86%E9%A1%B5%E6%96%B9%E6%B3%95%2F</url>
+    <content type="text"><![CDATA[移动互联网下微服务大行其道，服务之间按业务拆分精细，各司其职，通过服务发现rpc相互调用，实现各自的需求场景。 一个简单的列表，如果不依赖其他服务，只依赖自身的数据库，可以简单的通过sql即可查询出来。 而如果数据来源于其他服务，根据特定的需求场景，可能就需要调用多个服务，获取数据，判断属性，过滤数据，再展示，那么可能未免会出现分页的问题。 以下面的场景为例： 业务服务依赖两个底层服务的数据进行聚合，导致返回客户端的数据小于请求值10，甚至为空，客户端认为已经没数据了，从而错误提示用户“已经到底了”。 解决方案：客户端不依赖返回数据的数量判断是否还有数据，由服务端返回”hasNext=1”来判断是否有数据，控制用户是否可继续滑动查看 方案并不完美，极端情况下可能因为数据被过滤，导致返回前端数据太少设置没数据，影响体验。所以此方案只是不考虑极端场景的折中方案，另外的优化手段是初始请求size控制在一个合适的值，比如size=30]]></content>
       <tags>
-        <tag>分页</tag>
+        <tag>分页 业务方案</tag>
       </tags>
   </entry>
   <entry>
